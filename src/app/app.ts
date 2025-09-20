@@ -1,11 +1,13 @@
 import { Component, computed, signal } from '@angular/core';
 import { ActivitiesComponent } from './components/activities/activities.component';
 import { UserSidebarComponent } from './components/user-sidebar/user-sidebar.component';
+import { HeaderComponent } from './components/header/header.component';
+import { TabsComponent } from './components/tabs/tabs.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ActivitiesComponent, UserSidebarComponent],
+  imports: [ActivitiesComponent, UserSidebarComponent, HeaderComponent, TabsComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
