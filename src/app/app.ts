@@ -1,10 +1,11 @@
 import { Component, computed, signal } from '@angular/core';
 import { ActivitiesComponent } from './components/activities/activities.component';
+import { UserSidebarComponent } from './components/user-sidebar/user-sidebar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ActivitiesComponent],
+  imports: [ActivitiesComponent, UserSidebarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -22,7 +23,7 @@ export class App {
   ];
   private _selectedUserIndex = signal(0);
   selectedUserIndex = computed(() => this._selectedUserIndex());
-  onUserChange(value: string) {
+  onUserChange(value: any) {
     const idx = Number(value);
     if (!Number.isNaN(idx) && idx >= 0 && idx < this.users.length) {
       this._selectedUserIndex.set(idx);
