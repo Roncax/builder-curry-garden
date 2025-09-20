@@ -29,27 +29,7 @@
     @if (activeTab() === 'Activities') {
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Left: User selector (sticky) -->
-        <aside class="lg:col-span-4 xl:col-span-3">
-          <div class="sticky top-20">
-            <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur p-5 shadow-sm">
-              <h2 class="text-sm font-semibold text-slate-600">User</h2>
-              <label for="userSelect" class="sr-only">Select user</label>
-              <div class="mt-2">
-                <select id="userSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                        [value]="selectedUserIndex()" (change)="onUserChange($any($event.target).value)">
-                  @for (user of users; track user.email; let idx = $index) {
-                    <option [value]="idx">{{ user.name }} ({{ user.email }})</option>
-                  }
-                </select>
-              </div>
-              <div class="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
-                <p class="text-xs text-slate-600">Selected:</p>
-                <p class="text-sm font-medium text-slate-900 mt-0.5">{{ users[selectedUserIndex()].name }}</p>
-                <p class="text-xs text-slate-500">{{ users[selectedUserIndex()].email }}</p>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <app-user-sidebar class="contents" [users]="users" [selectedIndex]="selectedUserIndex()" (selectedIndexChange)="onUserChange($event)"></app-user-sidebar>
 
         <!-- Right: Activities component -->
         <section class="lg:col-span-8 xl:col-span-9">
