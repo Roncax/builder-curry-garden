@@ -1,34 +1,159 @@
-<div
-  class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200"
->
-  <div class="text-center">
-    <!-- TODO: replace everything here with the actual app! -->
-    <h1
-      class="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3"
-    >
-      <svg class="animate-spin h-8 w-8 text-slate-400" viewBox="0 0 50 50">
-        <circle
-          class="opacity-30"
-          cx="25"
-          cy="25"
-          r="20"
-          stroke="currentColor"
-          stroke-width="5"
-          fill="none"
-        />
-        <circle
-          class="text-slate-600"
-          cx="25"
-          cy="25"
-          r="20"
-          stroke="currentColor"
-          stroke-width="5"
-          fill="none"
-          stroke-dasharray="100"
-          stroke-dashoffset="75"
-        />
-      </svg>
-      Generating your app...
-    </h1>
+<div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 text-slate-800">
+  <!-- Header / Brand -->
+  <header class="backdrop-blur border-b border-slate-200/60 bg-white/70 sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-primary-500 to-secondary-500 shadow-inner"></div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-semibold tracking-tight">Aurora Timesheet</h1>
+          <p class="text-xs text-slate-500 -mt-0.5">Plan and track with clarity</p>
+        </div>
+      </div>
+      <nav class="hidden sm:flex items-center gap-1 p-1 rounded-xl bg-slate-100/70">
+        <button type="button" (click)="activeTab.set('Activities')" [class]="'px-3 py-1.5 rounded-lg text-sm font-medium transition ' + (activeTab() === 'Activities' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900')">Activities</button>
+        <button type="button" (click)="activeTab.set('Summary')" [class]="'px-3 py-1.5 rounded-lg text-sm font-medium transition ' + (activeTab() === 'Summary' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900')">Summary</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Tabs (mobile) -->
+  <div class="sm:hidden px-4 pt-4">
+    <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-slate-100/70">
+      <button type="button" (click)="activeTab.set('Activities')" [class]="'px-3 py-1.5 rounded-lg text-sm font-medium transition ' + (activeTab() === 'Activities' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900')">Activities</button>
+      <button type="button" (click)="activeTab.set('Summary')" [class]="'px-3 py-1.5 rounded-lg text-sm font-medium transition ' + (activeTab() === 'Summary' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900')">Summary</button>
+    </div>
   </div>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    @if (activeTab() === 'Activities') {
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: User selector (sticky) -->
+        <aside class="lg:col-span-4 xl:col-span-3">
+          <div class="sticky top-20">
+            <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur p-5 shadow-sm">
+              <h2 class="text-sm font-semibold text-slate-600">User</h2>
+              <label for="userSelect" class="sr-only">Select user</label>
+              <div class="mt-2">
+                <select id="userSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                        [value]="selectedUserIndex()" (change)="onUserChange(($event.target as HTMLSelectElement).value)">
+                  @for (user of users; track user.email; let idx = $index) {
+                    <option [value]="idx">{{ user.name }} ({{ user.email }})</option>
+                  }
+                </select>
+              </div>
+              <div class="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <p class="text-xs text-slate-600">Selected:</p>
+                <p class="text-sm font-medium text-slate-900 mt-0.5">{{ users[selectedUserIndex()].name }}</p>
+                <p class="text-xs text-slate-500">{{ users[selectedUserIndex()].email }}</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right: Activities table -->
+        <section class="lg:col-span-8 xl:col-span-9">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200/70 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+              <div class="flex-1">
+                <h2 class="text-base font-semibold">Activities</h2>
+                <p class="text-xs text-slate-600">Select a month and fill in hours for each activity in Q1 and Q2.</p>
+              </div>
+              <div class="w-full sm:w-64">
+                <label for="monthSelect" class="sr-only">Select month</label>
+                <select id="monthSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                        [value]="selectedMonth()" (change)="onMonthChange(($event.target as HTMLSelectElement).value)">
+                  @for (m of months; track m) {
+                    <option [value]="m">{{ m }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="p-5 overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-left text-slate-600 border-b border-slate-200/70">
+                    <th class="py-2 pr-3 w-[45%]">Activity</th>
+                    <th class="py-2 px-3 w-[20%]">Q1 (h)</th>
+                    <th class="py-2 px-3 w-[20%]">Q2 (h)</th>
+                    <th class="py-2 pl-3 w-[15%]"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of rows(); track row.id) {
+                    <tr class="border-b border-slate-100/80">
+                      <td class="py-2 pr-3">
+                        <label class="sr-only">Activity</label>
+                        <select class="w-full rounded-lg border-slate-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                [value]="row.activity" (change)="onRowActivityChange(row.id, ($event.target as HTMLSelectElement).value)">
+                          <option [value]="''">Select an activity</option>
+                          @for (opt of activityOptions; track opt) {
+                            <option [value]="opt">{{ opt }}</option>
+                          }
+                        </select>
+                      </td>
+                      <td class="py-2 px-3">
+                        <label class="sr-only">Q1 hours</label>
+                        <input type="number" min="0" step="0.5" class="w-full rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                               [value]="row.q1 ?? ''" (input)="onRowHoursChange(row.id, 'q1', ($event.target as HTMLInputElement).valueAsNumber)" />
+                      </td>
+                      <td class="py-2 px-3">
+                        <label class="sr-only">Q2 hours</label>
+                        <input type="number" min="0" step="0.5" class="w-full rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                               [value]="row.q2 ?? ''" (input)="onRowHoursChange(row.id, 'q2', ($event.target as HTMLInputElement).valueAsNumber)" />
+                      </td>
+                      <td class="py-2 pl-3 text-right">
+                        <button type="button" (click)="deleteRow(row.id)" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-slate-600 hover:text-red-600 hover:bg-red-50/60 border border-transparent hover:border-red-200 transition">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.036-1.005 12.06a3 3 0 0 1-2.987 2.781H8.08a3 3 0 0 1-2.987-2.78L4.087 6.66l-.209.036a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.974a52.662 52.662 0 0 1 3.369 0c1.603.074 2.815 1.41 2.815 2.974ZM10.25 8.5a.75.75 0 0 0-1.5 0v8.25a.75.75 0 0 0 1.5 0V8.5Zm5 0a.75.75 0 0 0-1.5 0v8.25a.75.75 0 0 0 1.5 0V8.5Z" clip-rule="evenodd"/></svg>
+                          <span class="text-xs font-medium">Delete</span>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              <div class="mt-4 flex items-center justify-between">
+                <button type="button" (click)="addRow()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3.5 py-2.5 text-sm font-medium hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                  Add row
+                </button>
+                <div class="text-sm text-slate-700">Total Q1: <span class="font-semibold">{{ totalQ1() }}</span> h · Total Q2: <span class="font-semibold">{{ totalQ2() }}</span> h</div>
+              </div>
+            </div>
+
+            <div class="p-5 border-t border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="text-xs text-slate-600">Month: <span class="font-medium text-slate-900">{{ selectedMonth() }}</span> · User: <span class="font-medium text-slate-900">{{ users[selectedUserIndex()].name }}</span></div>
+              <button type="button" (click)="submit()" [disabled]="submitting()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">
+                @if (submitting()) {
+                  <svg class="animate-spin h-4 w-4" viewBox="0 0 50 50"><circle class="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none"/><circle class="opacity-75" cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-dasharray="100" stroke-dashoffset="75"/></svg>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                }
+                Submit
+              </button>
+            </div>
+          </div>
+
+          @if (toastMessage()) {
+            <div class="mt-4">
+              <div [class]="'rounded-xl px-4 py-3 text-sm ' + (toastType() === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200')">
+                {{ toastMessage() }}
+              </div>
+            </div>
+          }
+        </section>
+      </section>
+    } @else {
+      <section class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur p-6 shadow-sm">
+        <h2 class="text-base font-semibold">Summary</h2>
+        <p class="text-sm text-slate-600 mt-1">This tab will display analytics and summaries derived from your activity entries.</p>
+        <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl overflow-x-auto">
+          <pre class="text-xs text-slate-700">{{ previewJson() }}</pre>
+        </div>
+      </section>
+    }
+  </main>
+
+  <footer class="py-6 text-center text-xs text-slate-500">© {{ year }} Aurora Labs</footer>
 </div>
