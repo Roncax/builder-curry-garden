@@ -4,14 +4,25 @@
       <h2 class="text-base font-semibold">Activities</h2>
       <p class="text-xs text-slate-600">Select a month and fill in hours for each activity in Q1 and Q2.</p>
     </div>
-    <div class="w-full sm:w-64">
-      <label for="monthSelect" class="sr-only">Select month</label>
-      <select id="monthSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-              [value]="selectedMonth()" (change)="onMonthChange($any($event.target).value)">
-        @for (m of months; track m) {
-          <option [value]="m">{{ m }}</option>
-        }
-      </select>
+    <div class="w-full sm:w-auto flex gap-3">
+      <div class="w-full sm:w-56">
+        <label for="monthSelect" class="sr-only">Select month</label>
+        <select id="monthSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                [value]="selectedMonth()" (change)="onMonthChange($any($event.target).value)">
+          @for (m of months; track m) {
+            <option [value]="m">{{ m }}</option>
+          }
+        </select>
+      </div>
+      <div class="w-28">
+        <label for="yearSelect" class="sr-only">Select year</label>
+        <select id="yearSelect" class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                [value]="selectedYear()" (change)="onYearChange($any($event.target).value)">
+          @for (y of years; track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+      </div>
     </div>
   </div>
 
@@ -68,7 +79,7 @@
   </div>
 
   <div class="p-5 border-t border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-    <div class="text-xs text-slate-600">Month: <span class="font-medium text-slate-900">{{ selectedMonth() }}</span> · User: <span class="font-medium text-slate-900">{{ selectedUser.name }}</span></div>
+    <div class="text-xs text-slate-600">Month: <span class="font-medium text-slate-900">{{ selectedMonth() }}</span> {{ selectedYear() }} · User: <span class="font-medium text-slate-900">{{ selectedUser.name }}</span></div>
     <button type="button" (click)="submit()" [disabled]="submitting()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">
       @if (submitting()) {
         <svg class="animate-spin h-4 w-4" viewBox="0 0 50 50"><circle class="opacity-25" cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none"/><circle class="opacity-75" cx="25" cy="25" r="20" stroke="currentColor" stroke-width="5" fill="none" stroke-dasharray="100" stroke-dashoffset="75"/></svg>
