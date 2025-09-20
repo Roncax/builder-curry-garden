@@ -25,6 +25,13 @@ export class ActivitiesComponent {
   selectedMonth = computed(() => this._selectedMonth());
   onMonthChange(value: string) { this._selectedMonth.set(value); }
 
+  // Years
+  private currentYear = new Date().getFullYear();
+  years = Array.from({ length: 7 }, (_, i) => this.currentYear - 3 + i);
+  private _selectedYear = signal<number>(this.currentYear);
+  selectedYear = computed(() => this._selectedYear());
+  onYearChange(value: string | number) { const yr = Number(value); if (!Number.isNaN(yr)) this._selectedYear.set(yr); }
+
   activityOptions = [
     'Development', 'Design', 'Research', 'Meetings', 'Documentation', 'QA/Testing', 'Support', 'Training'
   ];
@@ -67,8 +74,9 @@ export class ActivitiesComponent {
   private buildPayload() {
     const user = this.selectedUser;
     const month = this.selectedMonth();
+    const year = this.selectedYear();
     const activities = this._rows().map(({ activity, q1, q2 }) => ({ activity, q1: q1 ?? 0, q2: q2 ?? 0 }));
-    return { user, month, activities, totals: { q1: this.totalQ1(), q2: this.totalQ2() } };
+    return { user, month, year, activities, totals: { q1: this.totalQ1(), q2: this.totalQ2() } };
   }
 
   async submit() {
