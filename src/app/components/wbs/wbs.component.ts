@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 
-interface WbsColumn { key: 'name' | 'code' | 'tow' | 'country' | 'priority' | 'cci' | 'revenue'; label: string; type: 'text' | 'number' | 'select' }
-interface WbsRow { id: number; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number; [key: string]: any }
+interface WbsColumn { key: 'name' | 'code' | 'tow' | 'country' | 'priority' | 'cci' | 'revenue' | 'negativeRevenue' | 'description'; label: string; type: 'text' | 'number' | 'select' | 'checkbox' }
+interface WbsRow { id: number; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number; negativeRevenue?: boolean; description?: string; [key: string]: any }
 
 @Component({
   selector: 'app-wbs',
@@ -23,7 +23,9 @@ export class WbsComponent {
     { key: 'country', label: 'Country', type: 'select' },
     { key: 'priority', label: 'Priority', type: 'number' },
     { key: 'cci', label: 'CCI', type: 'number' },
-    { key: 'revenue', label: 'Revenue', type: 'number' }
+    { key: 'negativeRevenue', label: 'Negative', type: 'checkbox' },
+    { key: 'revenue', label: 'Revenue', type: 'number' },
+    { key: 'description', label: 'Description', type: 'text' }
   ];
 
   // Rows
@@ -42,6 +44,10 @@ export class WbsComponent {
     const col = this.columns.find(c => c.key === key);
     const value = col?.type === 'number' ? Number(raw) : raw;
     this._rows.set(this._rows().map(r => r.id === rowId ? { ...r, [key]: value } : r));
+  }
+
+  onCheckboxChange(rowId: number, key: 'negativeRevenue', checked: boolean) {
+    this._rows.set(this._rows().map(r => r.id === rowId ? { ...r, [key]: checked } : r));
   }
 
   onSelectChange(rowId: number, key: string, value: string) {
@@ -64,8 +70,34 @@ export class WbsComponent {
     this.header.set({ ...current, [key]: value });
   }
 
+  // Totals and validation
+  rowsTotal = computed(() => this._rows().reduce((sum, r) => {
+    const amt = Number(r.revenue ?? 0);
+    const sign = r.negativeRevenue ? -1 : 1;
+    return sum + sign * amt;
+  }, 0));
+  revenueValid = computed(() => (Number(this.header().revenue ?? 0)) >= this.rowsTotal());
+
   buildPayload() {
-    return { wbs: this.selectedWbs(), header: this.header(), columns: this.columns, rows: this.rows() };
+    return { wbs: this.selectedWbs(), header: this.header(), rowsTotal: this.rowsTotal(), columns: this.columns, rows: this.rows() };
+  }
+
+  async submit() {
+    this.toastMessage.set(null);
+    if (!this.revenueValid()) {
+      this.toastType.set('error');
+      this.toastMessage.set('Rows revenue exceeds header revenue. Please adjust.');
+      return;
+    }
+    const payload = this.buildPayload();
+    this.submitting.set(true);
+    try {
+      const res = await fetch('/api/wbs/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      this.toastType.set('success'); this.toastMessage.set('WBS configuration submitted.');
+    } catch (err) {
+      this.toastType.set('error'); this.toastMessage.set('Failed to submit WBS configuration.'); console.error(err);
+    } finally { this.submitting.set(false); }
   }
 
   async submit() {
