@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 
-interface WbsColumn { key: string; label: string; type: 'text' | 'number' | 'checkbox' | 'select' }
-interface WbsRow { id: number; isParent?: boolean; parentWbs?: string; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number; [key: string]: any }
+interface WbsColumn { key: 'name' | 'code' | 'tow' | 'country' | 'priority' | 'cci' | 'revenue'; label: string; type: 'text' | 'number' | 'select' }
+interface WbsRow { id: number; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number; [key: string]: any }
 
 @Component({
   selector: 'app-wbs',
@@ -17,8 +17,6 @@ export class WbsComponent {
 
   // Fixed columns per spec
   columns: WbsColumn[] = [
-    { key: 'isParent', label: 'Is Parent', type: 'checkbox' },
-    { key: 'parentWbs', label: 'Parent WBS', type: 'select' },
     { key: 'name', label: 'WBS Name', type: 'text' },
     { key: 'code', label: 'WBS Code', type: 'text' },
     { key: 'tow', label: 'ToW', type: 'select' },
@@ -30,7 +28,7 @@ export class WbsComponent {
 
   // Rows
   private nextId = 1;
-  private _rows = signal<WbsRow[]>([{ id: this.nextId++, isParent: false }]);
+  private _rows = signal<WbsRow[]>([{ id: this.nextId++ }]);
   rows = computed(() => this._rows());
 
   addRow() { this._rows.set([...this._rows(), { id: this.nextId++ }]); }
@@ -50,30 +48,24 @@ export class WbsComponent {
     this._rows.set(this._rows().map(r => r.id === rowId ? { ...r, [key]: value } : r));
   }
 
-  onCheckboxChange(rowId: number, key: 'isParent', checked: boolean) {
-    this._rows.set(this._rows().map(r => {
-      if (r.id !== rowId) return r;
-      const next: WbsRow = { ...r, [key]: checked };
-      if (checked) next.parentWbs = '';
-      return next;
-    }));
-  }
-
   submitting = signal(false);
   toastMessage = signal<string | null>(null);
   toastType = signal<'success' | 'error'>('success');
 
   towOptions = ['ADM', 'Build', 'Run', 'Consulting'];
   countryOptions = ['USA', 'Italy', 'UK', 'Germany', 'France', 'India'];
-  parentWbsOptions = computed(() => {
-    const names = this._rows().map(r => r.name).filter((v): v is string => !!v && v.trim().length > 0);
-    const codes = this._rows().map(r => r.code).filter((v): v is string => !!v && v.trim().length > 0);
-    const set = new Set<string>([...names, ...codes]);
-    return Array.from(set);
+
+  // Header single-row state
+  header = signal<{ name: string; code: string; tow: string; country: string; priority: number | null; cci: number | null; revenue: number | null; referenceContract: string }>({
+    name: '', code: '', tow: '', country: '', priority: null, cci: null, revenue: null, referenceContract: ''
   });
+  onHeaderChange(key: keyof ReturnType<typeof this.header>, value: any) {
+    const current = this.header();
+    this.header.set({ ...current, [key]: value });
+  }
 
   buildPayload() {
-    return { wbs: this.selectedWbs(), columns: this.columns, rows: this.rows() };
+    return { wbs: this.selectedWbs(), header: this.header(), columns: this.columns, rows: this.rows() };
   }
 
   async submit() {
