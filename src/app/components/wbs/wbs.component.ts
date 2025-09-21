@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 
 interface WbsColumn { key: string; label: string; type: 'text' | 'number' | 'checkbox' | 'select' }
-interface WbsRow { id: number; isParent?: boolean; parentWbs?: string; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number }
+interface WbsRow { id: number; isParent?: boolean; parentWbs?: string; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number; [key: string]: any }
 
 @Component({
   selector: 'app-wbs',
