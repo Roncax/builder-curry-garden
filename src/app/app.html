@@ -21,6 +21,10 @@
           <app-activities [selectedUser]="users[selectedUserIndex()]" (payloadChange)="onPayloadChange($event)"></app-activities>
         </section>
       </section>
+    } @else if (activeTab() === 'WBS') {
+      <section>
+        <app-wbs></app-wbs>
+      </section>
     } @else {
       <section class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur p-6 shadow-sm">
         <h2 class="text-base font-semibold">Summary</h2>
