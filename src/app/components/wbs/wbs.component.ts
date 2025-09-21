@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 
-interface WbsColumn { key: string; label: string; type: 'text' | 'number' }
-interface WbsRow { id: number; [key: string]: any }
+interface WbsColumn { key: string; label: string; type: 'text' | 'number' | 'checkbox' | 'select' }
+interface WbsRow { id: number; isParent?: boolean; parentWbs?: string; name?: string; code?: string; tow?: string; country?: string; priority?: number; cci?: number; revenue?: number }
 
 @Component({
   selector: 'app-wbs',
@@ -17,11 +17,12 @@ export class WbsComponent {
 
   // Fixed columns per spec
   columns: WbsColumn[] = [
-    { key: 'parent', label: 'Parent WBS', type: 'text' },
+    { key: 'isParent', label: 'Is Parent', type: 'checkbox' },
+    { key: 'parentWbs', label: 'Parent WBS', type: 'select' },
     { key: 'name', label: 'WBS Name', type: 'text' },
     { key: 'code', label: 'WBS Code', type: 'text' },
-    { key: 'tow', label: 'ToW', type: 'text' },
-    { key: 'country', label: 'Country', type: 'text' },
+    { key: 'tow', label: 'ToW', type: 'select' },
+    { key: 'country', label: 'Country', type: 'select' },
     { key: 'priority', label: 'Priority', type: 'number' },
     { key: 'cci', label: 'CCI', type: 'number' },
     { key: 'revenue', label: 'Revenue', type: 'number' }
@@ -29,7 +30,7 @@ export class WbsComponent {
 
   // Rows
   private nextId = 1;
-  private _rows = signal<WbsRow[]>([{ id: this.nextId++ }]);
+  private _rows = signal<WbsRow[]>([{ id: this.nextId++, isParent: false }]);
   rows = computed(() => this._rows());
 
   addRow() { this._rows.set([...this._rows(), { id: this.nextId++ }]); }
@@ -45,9 +46,31 @@ export class WbsComponent {
     this._rows.set(this._rows().map(r => r.id === rowId ? { ...r, [key]: value } : r));
   }
 
+  onSelectChange(rowId: number, key: string, value: string) {
+    this._rows.set(this._rows().map(r => r.id === rowId ? { ...r, [key]: value } : r));
+  }
+
+  onCheckboxChange(rowId: number, key: 'isParent', checked: boolean) {
+    this._rows.set(this._rows().map(r => {
+      if (r.id !== rowId) return r;
+      const next: WbsRow = { ...r, [key]: checked };
+      if (checked) next.parentWbs = '';
+      return next;
+    }));
+  }
+
   submitting = signal(false);
   toastMessage = signal<string | null>(null);
   toastType = signal<'success' | 'error'>('success');
+
+  towOptions = ['ADM', 'Build', 'Run', 'Consulting'];
+  countryOptions = ['USA', 'Italy', 'UK', 'Germany', 'France', 'India'];
+  parentWbsOptions = computed(() => {
+    const names = this._rows().map(r => r.name).filter((v): v is string => !!v && v.trim().length > 0);
+    const codes = this._rows().map(r => r.code).filter((v): v is string => !!v && v.trim().length > 0);
+    const set = new Set<string>([...names, ...codes]);
+    return Array.from(set);
+  });
 
   buildPayload() {
     return { wbs: this.selectedWbs(), columns: this.columns, rows: this.rows() };
