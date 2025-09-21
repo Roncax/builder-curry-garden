@@ -34,7 +34,29 @@
             <td class="py-2 px-2 text-slate-500">{{ row.id }}</td>
             @for (c of columns; track c.key) {
               <td class="py-2 px-2">
-                <input [type]="c.type === 'number' ? 'number' : 'text'" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row[c.key] ?? ''" (input)="onCellChange(row.id, c.key, $any($event.target).value)" />
+                @if (c.key === 'isParent') {
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" [checked]="row.isParent === true" (change)="onCheckboxChange(row.id, 'isParent', $any($event.target).checked)" />
+                    <span class="text-xs text-slate-600">Is parent</span>
+                  </label>
+                } @else if (c.key === 'tow') {
+                  <select class="w-44 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.tow ?? ''" (change)="onSelectChange(row.id, 'tow', $any($event.target).value)">
+                    <option [value]="''">Select ToW</option>
+                    @for (opt of towOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+                  </select>
+                } @else if (c.key === 'country') {
+                  <select class="w-44 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.country ?? ''" (change)="onSelectChange(row.id, 'country', $any($event.target).value)">
+                    <option [value]="''">Select country</option>
+                    @for (opt of countryOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+                  </select>
+                } @else if (c.key === 'parentWbs') {
+                  <select [disabled]="row.isParent === true" [class]="'w-44 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 border ' + (row.isParent ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-white border-slate-200 focus:ring-primary-300')" [value]="row.parentWbs ?? ''" (change)="onSelectChange(row.id, 'parentWbs', $any($event.target).value)">
+                    <option [value]="''">None</option>
+                    @for (opt of parentWbsOptions(); track opt) { <option [value]="opt">{{ opt }}</option> }
+                  </select>
+                } @else {
+                  <input [type]="c.type === 'number' ? 'number' : 'text'" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row[c.key] ?? ''" (input)="onCellChange(row.id, c.key, $any($event.target).value)" />
+                }
               </td>
             }
             <td class="py-2 px-2 text-right">
