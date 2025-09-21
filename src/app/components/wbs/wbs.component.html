@@ -54,8 +54,16 @@
                     <option [value]="''">None</option>
                     @for (opt of parentWbsOptions(); track opt) { <option [value]="opt">{{ opt }}</option> }
                   </select>
-                } @else {
-                  <input [type]="c.type === 'number' ? 'number' : 'text'" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row[c.key] ?? ''" (input)="onCellChange(row.id, c.key, $any($event.target).value)" />
+                } @else if (c.key === 'name') {
+                  <input type="text" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.name ?? ''" (input)="onCellChange(row.id, 'name', $any($event.target).value)" />
+                } @else if (c.key === 'code') {
+                  <input type="text" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.code ?? ''" (input)="onCellChange(row.id, 'code', $any($event.target).value)" />
+                } @else if (c.key === 'priority') {
+                  <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.priority ?? ''" (input)="onCellChange(row.id, 'priority', $any($event.target).value)" />
+                } @else if (c.key === 'cci') {
+                  <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.cci ?? ''" (input)="onCellChange(row.id, 'cci', $any($event.target).value)" />
+                } @else if (c.key === 'revenue') {
+                  <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.revenue ?? ''" (input)="onCellChange(row.id, 'revenue', $any($event.target).value)" />
                 }
               </td>
             }
