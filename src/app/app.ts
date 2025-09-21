@@ -3,11 +3,12 @@ import { ActivitiesComponent } from './components/activities/activities.componen
 import { UserSidebarComponent } from './components/user-sidebar/user-sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { TabsComponent } from './components/tabs/tabs.component';
+import { WbsComponent } from './components/wbs/wbs.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ActivitiesComponent, UserSidebarComponent, HeaderComponent, TabsComponent],
+  imports: [ActivitiesComponent, UserSidebarComponent, HeaderComponent, TabsComponent, WbsComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -15,7 +16,7 @@ export class App {
   year = new Date().getFullYear();
 
   // Tabs
-  activeTab = signal<'Activities' | 'Summary'>('Activities');
+  activeTab = signal<'Activities' | 'WBS' | 'Summary'>('Activities');
 
   // Users
   users = [
