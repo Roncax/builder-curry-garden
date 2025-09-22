@@ -6,11 +6,12 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { WbsComponent } from './components/wbs/wbs.component';
 import { UsersComponent } from './components/users/users.component';
 import { ProjectsComponent } from './components/projects/projects.component';
+import { EnumsComponent } from './components/enums/enums.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ActivitiesComponent, UserSidebarComponent, HeaderComponent, TabsComponent, WbsComponent, UsersComponent, ProjectsComponent],
+  imports: [ActivitiesComponent, UserSidebarComponent, HeaderComponent, TabsComponent, WbsComponent, UsersComponent, ProjectsComponent, EnumsComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -18,7 +19,7 @@ export class App {
   year = new Date().getFullYear();
 
   // Tabs
-  activeTab = signal<'Activities' | 'WBS' | 'Projects' | 'Users'>('Activities');
+  activeTab = signal<'Activities' | 'WBS' | 'Projects' | 'Users' | 'Enums'>('Activities');
 
   // Users
   users = [
