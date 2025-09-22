@@ -92,8 +92,15 @@
                   <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.priority ?? ''" (input)="onCellChange(row.id, 'priority', $any($event.target).value)" />
                 } @else if (c.key === 'cci') {
                   <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.cci ?? ''" (input)="onCellChange(row.id, 'cci', $any($event.target).value)" />
+                } @else if (c.key === 'negativeRevenue') {
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" [checked]="row.negativeRevenue === true" (change)="onCheckboxChange(row.id, 'negativeRevenue', $any($event.target).checked)" />
+                    <span class="text-xs text-slate-600">Negative</span>
+                  </label>
                 } @else if (c.key === 'revenue') {
                   <input type="number" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.revenue ?? ''" (input)="onCellChange(row.id, 'revenue', $any($event.target).value)" />
+                } @else if (c.key === 'description') {
+                  <input type="text" class="w-56 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="row.description ?? ''" (input)="onCellChange(row.id, 'description', $any($event.target).value)" />
                 }
               </td>
             }
@@ -106,9 +113,16 @@
     </table>
   </div>
 
-  <div class="p-5 border-t border-slate-200/70 flex items-center justify-between gap-3">
-    <div class="text-xs text-slate-600">WBS: <span class="font-medium text-slate-900">{{ selectedWbs() }}</span> · Rows: <span class="font-medium text-slate-900">{{ rows().length }}</span></div>
-    <button type="button" (click)="submit()" [disabled]="submitting()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">Submit</button>
+  <div class="p-5 border-t border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="text-xs text-slate-700 space-y-1">
+      <div>Header revenue: <span class="font-medium">{{ header().revenue ?? 0 }}</span></div>
+      <div>Rows total: <span [class]="revenueValid() ? 'font-medium text-slate-900' : 'font-semibold text-red-600'">{{ rowsTotal() }}</span></div>
+      @if (!revenueValid()) { <div class="text-red-600">Rows total must be ≤ header revenue.</div> }
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-xs text-slate-600">WBS: <span class="font-medium text-slate-900">{{ selectedWbs() }}</span> · Rows: <span class="font-medium text-slate-900">{{ rows().length }}</span></div>
+      <button type="button" (click)="submit()" [disabled]="submitting() || !revenueValid()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">Submit</button>
+    </div>
   </div>
 
   @if (toastMessage()) {
