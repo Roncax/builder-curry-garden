@@ -99,17 +99,4 @@ export class WbsComponent {
       this.toastType.set('error'); this.toastMessage.set('Failed to submit WBS configuration.'); console.error(err);
     } finally { this.submitting.set(false); }
   }
-
-  async submit() {
-    this.toastMessage.set(null);
-    const payload = this.buildPayload();
-    this.submitting.set(true);
-    try {
-      const res = await fetch('/api/wbs/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      this.toastType.set('success'); this.toastMessage.set('WBS configuration submitted.');
-    } catch (err) {
-      this.toastType.set('error'); this.toastMessage.set('Failed to submit WBS configuration.'); console.error(err);
-    } finally { this.submitting.set(false); }
-  }
 }
