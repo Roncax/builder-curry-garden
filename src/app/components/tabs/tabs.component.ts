@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-export type MainTab = 'Activities' | 'WBS' | 'Projects' | 'Users';
+export type MainTab = 'Activities' | 'WBS' | 'Projects' | 'Users' | 'Enums';
 
 @Component({
   selector: 'app-tabs',
