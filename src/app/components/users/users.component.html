@@ -1,0 +1,68 @@
+<div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+  <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+    <div>
+      <h2 class="text-base font-semibold">Users</h2>
+      <p class="text-xs text-slate-600">Manage users and allocation details.</p>
+    </div>
+    <button type="button" (click)="addRow()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+  </div>
+
+  <div class="p-5 overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-slate-600 border-b border-slate-200/70">
+          <th class="py-2 px-2">#</th>
+          <th class="py-2 px-2 whitespace-nowrap">User name</th>
+          <th class="py-2 px-2 whitespace-nowrap">Email</th>
+          <th class="py-2 px-2 whitespace-nowrap">LCR</th>
+          <th class="py-2 px-2 whitespace-nowrap">ToW</th>
+          <th class="py-2 px-2 whitespace-nowrap">Country</th>
+          <th class="py-2 px-2 whitespace-nowrap">Allocable</th>
+          <th class="py-2 px-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of rows(); track u.id) {
+          <tr class="border-b border-slate-100/80">
+            <td class="py-2 px-2 text-slate-500">{{ u.id }}</td>
+            <td class="py-2 px-2"><input type="text" class="w-44 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="u.name" (input)="onChange(u.id, 'name', $any($event.target).value)" /></td>
+            <td class="py-2 px-2"><input type="email" class="w-56 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="u.email" (input)="onChange(u.id, 'email', $any($event.target).value)" /></td>
+            <td class="py-2 px-2"><input type="number" class="w-28 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="u.lcr ?? ''" (input)="onChange(u.id, 'lcr', $any($event.target).value)" /></td>
+            <td class="py-2 px-2">
+              <select class="w-40 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="u.tow" (change)="onChange(u.id, 'tow', $any($event.target).value)">
+                <option [value]="''">Select ToW</option>
+                @for (opt of towOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+              </select>
+            </td>
+            <td class="py-2 px-2">
+              <select class="w-40 rounded-lg border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="u.country" (change)="onChange(u.id, 'country', $any($event.target).value)">
+                <option [value]="''">Select country</option>
+                @for (opt of countryOptions; track opt) { <option [value]="opt">{{ opt }}</option> }
+              </select>
+            </td>
+            <td class="py-2 px-2">
+              <label class="inline-flex items-center gap-2">
+                <input type="checkbox" [checked]="u.isAllocable" (change)="onChange(u.id, 'isAllocable', $any($event.target).checked)" />
+                <span class="text-xs text-slate-600">Allocable</span>
+              </label>
+            </td>
+            <td class="py-2 px-2 text-right">
+              <button type="button" (click)="deleteRow(u.id)" class="text-slate-500 hover:text-red-600">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-5 border-t border-slate-200/70 flex items-center justify-between gap-3">
+    <div class="text-xs text-slate-600">Users: <span class="font-medium text-slate-900">{{ rows().length }}</span></div>
+    <button type="button" (click)="submit()" [disabled]="submitting()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">Submit</button>
+  </div>
+
+  @if (toastMessage()) {
+    <div class="p-5 pt-0">
+      <div [class]="'rounded-xl px-4 py-3 text-sm ' + (toastType() === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200')">{{ toastMessage() }}</div>
+    </div>
+  }
+</div>
