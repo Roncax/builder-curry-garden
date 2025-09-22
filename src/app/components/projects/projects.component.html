@@ -1,0 +1,49 @@
+<div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+  <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+    <div>
+      <h2 class="text-base font-semibold">Projects</h2>
+      <p class="text-xs text-slate-600">Manage client projects and financials.</p>
+    </div>
+    <button type="button" (click)="addRow()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+  </div>
+
+  <div class="p-5 overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-slate-600 border-b border-slate-200/70">
+          <th class="py-2 px-2">#</th>
+          <th class="py-2 px-2 whitespace-nowrap">Client</th>
+          <th class="py-2 px-2 whitespace-nowrap">Revenue</th>
+          <th class="py-2 px-2 whitespace-nowrap">Cost</th>
+          <th class="py-2 px-2 whitespace-nowrap">CCI</th>
+          <th class="py-2 px-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of rows(); track p.id) {
+          <tr class="border-b border-slate-100/80">
+            <td class="py-2 px-2 text-slate-500">{{ p.id }}</td>
+            <td class="py-2 px-2"><input type="text" class="w-56 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="p.client" (input)="onChange(p.id, 'client', $any($event.target).value)" /></td>
+            <td class="py-2 px-2"><input type="number" class="w-40 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="p.revenue ?? ''" (input)="onChange(p.id, 'revenue', $any($event.target).value)" /></td>
+            <td class="py-2 px-2"><input type="number" class="w-40 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="p.cost ?? ''" (input)="onChange(p.id, 'cost', $any($event.target).value)" /></td>
+            <td class="py-2 px-2"><input type="number" class="w-32 rounded-lg border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300" [value]="p.cci ?? ''" (input)="onChange(p.id, 'cci', $any($event.target).value)" /></td>
+            <td class="py-2 px-2 text-right">
+              <button type="button" (click)="deleteRow(p.id)" class="text-slate-500 hover:text-red-600">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-5 border-t border-slate-200/70 flex items-center justify-between gap-3">
+    <div class="text-xs text-slate-600">Projects: <span class="font-medium text-slate-900">{{ rows().length }}</span></div>
+    <button type="button" (click)="submit()" [disabled]="submitting()" class="inline-flex items-center gap-2 rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400">Submit</button>
+  </div>
+
+  @if (toastMessage()) {
+    <div class="p-5 pt-0">
+      <div [class]="'rounded-xl px-4 py-3 text-sm ' + (toastType() === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200')">{{ toastMessage() }}</div>
+    </div>
+  }
+</div>

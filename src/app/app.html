@@ -25,6 +25,10 @@
       <section>
         <app-wbs></app-wbs>
       </section>
+    } @else if (activeTab() === 'Projects') {
+      <section>
+        <app-projects></app-projects>
+      </section>
     } @else if (activeTab() === 'Users') {
       <section>
         <app-users></app-users>
