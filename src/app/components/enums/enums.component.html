@@ -1,0 +1,157 @@
+<div class="space-y-6">
+  <!-- Activity Table -->
+  <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+      <div>
+        <h3 class="text-base font-semibold">Activity</h3>
+        <p class="text-xs text-slate-600">Configure activities.</p>
+      </div>
+      <button type="button" (click)="addActivity()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-slate-600 border-b border-slate-200/70">
+            <th class="py-2 px-2">#</th>
+            <th class="py-2 px-2">Code</th>
+            <th class="py-2 px-2">Chargeable</th>
+            <th class="py-2 px-2">Description</th>
+            <th class="py-2 px-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of activities(); track r.id) {
+            <tr class="border-b border-slate-100/80">
+              <td class="py-2 px-2 text-slate-500">{{ r.id }}</td>
+              <td class="py-2 px-2"><input type="text" class="w-36 rounded-lg border-slate-200 px-3 py-2" [value]="r.code" (input)="setActivity(r.id, 'code', $any($event.target).value)" /></td>
+              <td class="py-2 px-2">
+                <label class="inline-flex items-center gap-2"><input type="checkbox" [checked]="r.isChargeable" (change)="setActivity(r.id, 'isChargeable', $any($event.target).checked)" /><span class="text-xs text-slate-600">Yes</span></label>
+              </td>
+              <td class="py-2 px-2"><input type="text" class="w-80 rounded-lg border-slate-200 px-3 py-2" [value]="r.description" (input)="setActivity(r.id, 'description', $any($event.target).value)" /></td>
+              <td class="py-2 px-2 text-right"><button type="button" (click)="delActivity(r.id)" class="text-slate-500 hover:text-red-600">Delete</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="p-5 border-t border-slate-200/70 flex items-center justify-end">
+      <button type="button" (click)="submitActivities()" class="rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700">Submit</button>
+    </div>
+  </div>
+
+  <!-- ToW Table -->
+  <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+      <div>
+        <h3 class="text-base font-semibold">ToW</h3>
+        <p class="text-xs text-slate-600">Configure Terms of Work.</p>
+      </div>
+      <button type="button" (click)="addTow()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-slate-600 border-b border-slate-200/70">
+            <th class="py-2 px-2">#</th>
+            <th class="py-2 px-2">Code</th>
+            <th class="py-2 px-2">Description</th>
+            <th class="py-2 px-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of tows(); track r.id) {
+            <tr class="border-b border-slate-100/80">
+              <td class="py-2 px-2 text-slate-500">{{ r.id }}</td>
+              <td class="py-2 px-2"><input type="text" class="w-36 rounded-lg border-slate-200 px-3 py-2" [value]="r.code" (input)="setTow(r.id, 'code', $any($event.target).value)" /></td>
+              <td class="py-2 px-2"><input type="text" class="w-80 rounded-lg border-slate-200 px-3 py-2" [value]="r.description" (input)="setTow(r.id, 'description', $any($event.target).value)" /></td>
+              <td class="py-2 px-2 text-right"><button type="button" (click)="delTow(r.id)" class="text-slate-500 hover:text-red-600">Delete</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="p-5 border-t border-slate-200/70 flex items-center justify-end">
+      <button type="button" (click)="submitTows()" class="rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700">Submit</button>
+    </div>
+  </div>
+
+  <!-- Location Table -->
+  <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+      <div>
+        <h3 class="text-base font-semibold">Location</h3>
+        <p class="text-xs text-slate-600">Configure locations.</p>
+      </div>
+      <button type="button" (click)="addLocation()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-slate-600 border-b border-slate-200/70">
+            <th class="py-2 px-2">#</th>
+            <th class="py-2 px-2">Code</th>
+            <th class="py-2 px-2">Country</th>
+            <th class="py-2 px-2">Description</th>
+            <th class="py-2 px-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of locations(); track r.id) {
+            <tr class="border-b border-slate-100/80">
+              <td class="py-2 px-2 text-slate-500">{{ r.id }}</td>
+              <td class="py-2 px-2"><input type="text" class="w-36 rounded-lg border-slate-200 px-3 py-2" [value]="r.code" (input)="setLocation(r.id, 'code', $any($event.target).value)" /></td>
+              <td class="py-2 px-2"><input type="text" class="w-36 rounded-lg border-slate-200 px-3 py-2" [value]="r.country" (input)="setLocation(r.id, 'country', $any($event.target).value)" /></td>
+              <td class="py-2 px-2"><input type="text" class="w-80 rounded-lg border-slate-200 px-3 py-2" [value]="r.description" (input)="setLocation(r.id, 'description', $any($event.target).value)" /></td>
+              <td class="py-2 px-2 text-right"><button type="button" (click)="delLocation(r.id)" class="text-slate-500 hover:text-red-600">Delete</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="p-5 border-t border-slate-200/70 flex items-center justify-end">
+      <button type="button" (click)="submitLocations()" class="rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700">Submit</button>
+    </div>
+  </div>
+
+  <!-- Client Table -->
+  <div class="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-slate-200/70 flex items-center justify-between">
+      <div>
+        <h3 class="text-base font-semibold">Client</h3>
+        <p class="text-xs text-slate-600">Configure clients.</p>
+      </div>
+      <button type="button" (click)="addClient()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 text-white px-3 py-2 text-sm font-medium hover:bg-slate-800">Add row</button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-slate-600 border-b border-slate-200/70">
+            <th class="py-2 px-2">#</th>
+            <th class="py-2 px-2">Code</th>
+            <th class="py-2 px-2">Description</th>
+            <th class="py-2 px-2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of clients(); track r.id) {
+            <tr class="border-b border-slate-100/80">
+              <td class="py-2 px-2 text-slate-500">{{ r.id }}</td>
+              <td class="py-2 px-2"><input type="text" class="w-36 rounded-lg border-slate-200 px-3 py-2" [value]="r.code" (input)="setClient(r.id, 'code', $any($event.target).value)" /></td>
+              <td class="py-2 px-2"><input type="text" class="w-80 rounded-lg border-slate-200 px-3 py-2" [value]="r.description" (input)="setClient(r.id, 'description', $any($event.target).value)" /></td>
+              <td class="py-2 px-2 text-right"><button type="button" (click)="delClient(r.id)" class="text-slate-500 hover:text-red-600">Delete</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="p-5 border-t border-slate-200/70 flex items-center justify-end">
+      <button type="button" (click)="submitClients()" class="rounded-xl bg-primary-600 text-white px-4 py-2.5 text-sm font-semibold shadow-sm hover:bg-primary-700">Submit</button>
+    </div>
+  </div>
+
+  @if (toastMessage()) {
+    <div>
+      <div [class]="'rounded-xl px-4 py-3 text-sm ' + (toastType() === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200')">{{ toastMessage() }}</div>
+    </div>
+  }
+</div>
